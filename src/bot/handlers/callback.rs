@@ -6,6 +6,7 @@ use teloxide::{
     prelude::{Requester, ResponseResult},
     types::CallbackQuery,
 };
+use tokio::sync::RwLock;
 
 use crate::{
     bot::keyboard::folder_keyboard,
@@ -18,14 +19,14 @@ use crate::{
 pub async fn process_callback(
     bot: Bot,
     q: CallbackQuery,
-    tree: Arc<Node>,
+    tree: Arc<RwLock<Node>>,
     config: Arc<Config>,
 ) -> ResponseResult<()> {
     println!(
         "CallbackQuery received: id={} data={:?} from={}",
         q.id, q.data, q.from.id.0
     );
-
+    let tree = tree.read().await;
     if q.from.id.0 != config.owner_id {
         return Ok(());
     }

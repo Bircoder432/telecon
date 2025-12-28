@@ -4,12 +4,13 @@ use crate::config;
 use crate::parser::tree::Node;
 use std::sync::Arc;
 use teloxide::prelude::*;
+use tokio::sync::RwLock;
 
 pub async fn process_command(
     bot: Bot,
     msg: Message,
     cmd: Command,
-    services: Arc<Node>,
+    services: Arc<RwLock<Node>>,
     config: Arc<config::Config>,
 ) -> ResponseResult<()> {
     if config.owner_id != msg.from().unwrap().id.0 {
@@ -26,7 +27,7 @@ pub async fn process_command(
         }
 
         Command::Services => {
-            let keyboard = folder_keyboard(&services.clone(), "");
+            let keyboard = folder_keyboard(&*services.read().await, "");
 
             bot.send_message(msg.chat.id, "Выбирай сервис:")
                 .reply_markup(keyboard)
