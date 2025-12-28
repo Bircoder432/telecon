@@ -1,0 +1,4 @@
+name = "example_service"
+title = "Example Service"
+command = "echo"
+args = ["Hello, world!"]
