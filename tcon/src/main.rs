@@ -28,6 +28,7 @@ enum Commands {
         #[arg(short, long)]
         buttons: Option<String>,
     },
+
     Reload,
 }
 
@@ -63,6 +64,7 @@ async fn main() -> anyhow::Result<()> {
                 media: media.into_iter().collect(),
             }
         }
+
         Commands::Reload => SocketCommand::ReloadServices,
     };
 

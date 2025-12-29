@@ -1,5 +1,6 @@
 use std::sync::Arc;
 use telecon::{
+    app::command_runner::CommandRunner,
     config::Config,
     parser::{
         Service,
@@ -7,14 +8,12 @@ use telecon::{
         parse_tree,
         tree::Node,
     },
-    runner::{run_custom_handler, run_service},
     utils::find_node,
 };
 use tokio::sync::RwLock;
 
 #[tokio::test]
 async fn test_config_load() {
-    // создаем тестовый config.toml
     let temp_dir = tempfile::tempdir().unwrap();
     let path = temp_dir.path().join("config.toml");
     std::fs::write(
@@ -82,6 +81,7 @@ async fn test_handler_registry_load() {
     assert!(registry.handlers.contains_key("my_handler"));
     let handler: &HandlerConfig = registry.handlers.get("my_handler").unwrap();
     assert_eq!(handler.command, "echo");
+    assert_eq!(handler.args, vec!["hello"]);
 }
 
 #[tokio::test]
@@ -93,13 +93,19 @@ async fn test_run_service_and_handler() {
         args: vec!["hello".into()],
     };
 
-    run_service(&service).await;
+    let output = CommandRunner::run(&service.command, &service.args)
+        .await
+        .unwrap();
+    assert_eq!(output.trim(), "hello");
 
-    let handler = telecon::parser::handler::HandlerConfig {
+    let handler = HandlerConfig {
         name: "handler".into(),
         command: "echo".into(),
         args: vec!["world".into()],
     };
 
-    run_custom_handler(&handler).await;
+    let output = CommandRunner::run(&handler.command, &handler.args)
+        .await
+        .unwrap();
+    assert_eq!(output.trim(), "world");
 }

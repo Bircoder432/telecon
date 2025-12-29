@@ -8,7 +8,10 @@ use tokio::{
     sync::mpsc,
 };
 
-use crate::config::Config;
+use crate::{
+    config::Config,
+    domain::{action::Action, notification::Notification},
+};
 
 pub const SOCKET_PATH: &str = "/tmp/telecon.sock";
 
@@ -21,6 +24,25 @@ pub enum SocketCommand {
         buttons: Vec<(String, String)>,
     },
     ReloadServices,
+}
+
+impl From<SocketCommand> for Action {
+    fn from(cmd: SocketCommand) -> Self {
+        match cmd {
+            SocketCommand::SendMessage {
+                text,
+                files,
+                media,
+                buttons,
+            } => Action::Notify(Notification {
+                text,
+                files,
+                media,
+                buttons,
+            }),
+            SocketCommand::ReloadServices => Action::ReloadServices,
+        }
+    }
 }
 
 pub async fn run(_bot: Bot, _config: Config, tx: mpsc::Sender<SocketCommand>) -> Result<()> {
