@@ -35,12 +35,15 @@ pub async fn process_callback(
     {
         let handlers = custom_handlers.read().await;
         if let Some(handler) = handlers.handlers.get(&data) {
+            println!("Found handler: {:?}", handler);
             let handler = handler.clone();
             tokio::spawn(async move {
                 crate::runner::run_custom_handler(&handler).await;
             });
             bot.answer_callback_query(q.id).await.ok();
             return Ok(());
+        } else {
+            println!("No handler found for data: {:?}", data);
         }
     }
 

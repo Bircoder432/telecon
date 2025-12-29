@@ -27,7 +27,7 @@ pub async fn run_service(service: &Service) {
 }
 
 pub async fn run_custom_handler(handler: &HandlerConfig) {
-    let mut cmd = Command::new(&handler.exec);
+    let mut cmd = Command::new(&handler.command);
     cmd.args(&handler.args);
 
     match cmd.output().await {

@@ -72,7 +72,7 @@ async fn test_handler_registry_load() {
         &handler_path,
         r#"
         name = "my_handler"
-        exec = "echo"
+        command = "echo"
         args = ["hello"]
     "#,
     )
@@ -81,7 +81,7 @@ async fn test_handler_registry_load() {
     let registry: HandlerRegistry = load_handlers(temp_dir.path().to_str().unwrap());
     assert!(registry.handlers.contains_key("my_handler"));
     let handler: &HandlerConfig = registry.handlers.get("my_handler").unwrap();
-    assert_eq!(handler.exec, "echo");
+    assert_eq!(handler.command, "echo");
 }
 
 #[tokio::test]
@@ -97,7 +97,7 @@ async fn test_run_service_and_handler() {
 
     let handler = telecon::parser::handler::HandlerConfig {
         name: "handler".into(),
-        exec: "echo".into(),
+        command: "echo".into(),
         args: vec!["world".into()],
     };
 

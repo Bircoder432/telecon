@@ -55,7 +55,7 @@ async fn main() -> anyhow::Result<()> {
                     Some((parts.next()?.to_string(), parts.next()?.to_string()))
                 })
                 .collect::<Vec<_>>();
-
+            println!("{:#?}", buttons_parsed);
             SocketCommand::SendMessage {
                 text,
                 files: files.into_iter().collect(),

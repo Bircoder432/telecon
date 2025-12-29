@@ -207,7 +207,8 @@ async fn socket_rx_loop(
 
                 let new_registry = parser::load_handlers(&handlers_path);
                 let mut handlers_lock = custom_handlers.write().await;
-                *handlers_lock = new_registry;
+                *handlers_lock = new_registry.clone();
+                println!("{:#?}", new_registry);
                 bot.send_message(ChatId(owner_id), "Custom handlers reloaded")
                     .await
                     .ok();
